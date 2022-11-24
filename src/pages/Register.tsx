@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { redirect, Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
@@ -35,15 +35,14 @@ const Register: React.FC = () => {
       .then((res) => res.data)
       .catch((err) => {
         if (err instanceof AxiosError) {
-          setMessage(`로그인에 실패했습니다. (${err.response?.data?.message})`);
+          setMessage(err.response?.data?.message || '회원가입에 실패했습니다.');
         }
       });
 
     if (response) {
       setMessage(undefined);
       setQrURL(response.result.twoFactorUrl);
-      console.log(response.result);
-    } else setMessage('회원가입에 실패했습니다.');
+    }
   }, []);
 
   const handleClickQR = useCallback(() => {
@@ -64,7 +63,7 @@ const Register: React.FC = () => {
             css={[tw`m-auto`]}
           />
           <span>OTP 어플리케이션에 QR코드를 등록해 주세요</span>
-          <Button type="button" css={[tw`w-full`]} onClick={() => navigate('/')}>
+          <Button type="button" css={[tw`w-full`]} onClick={() => navigate('/login')}>
             다음
           </Button>
         </div>
@@ -98,7 +97,12 @@ const Register: React.FC = () => {
           <Button type="submit" css={[tw`w-full mt-8`]}>
             회원가입
           </Button>
-          {message && <span>{message}</span>}
+          {message && (
+            <div>
+              <div>회원가입에 실패했습니다.</div>
+              <div>{message}</div>
+            </div>
+          )}
         </form>
       )}
     </DefaultLayout>

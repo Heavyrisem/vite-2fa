@@ -2,6 +2,12 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@router/*": [
+                "src/router/*"
+            ],
+            "@recoil/*": [
+                "src/recoil/*"
+            ],
             "@utils/*": [
                 "src/utils/*"
             ],

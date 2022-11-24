@@ -35,6 +35,8 @@ export default defineConfig({
       { find: '@contexts', replacement: 'src/contexts' },
       { find: '@styles', replacement: 'src/styles' },
       { find: '@utils', replacement: 'src/utils' },
+      { find: '@recoil', replacement: 'src/recoil' },
+      { find: '@router', replacement: 'src/router' },
     ],
   },
   esbuild: {
@@ -53,7 +55,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: {
-      target: 'es2020',
+      target: 'es2022',
     },
   },
 });

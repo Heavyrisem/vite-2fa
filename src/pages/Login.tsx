@@ -1,12 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { AxiosError } from 'axios';
+import { useSetRecoilState } from 'recoil';
 import tw from 'twin.macro';
+import { LoginResponse } from 'types/API';
 
 import Button from '@components/Button';
 import Input from '@components/Input';
 import DefaultLayout from '@components/Layouts/DefaultLayout';
+import authorizationState from '@recoil/atoms/authorization';
 import { axios } from '@utils/axios';
 
 interface LoginForm {
@@ -16,23 +20,35 @@ interface LoginForm {
 }
 
 const Login: React.FC = () => {
+  const setAuthorization = useSetRecoilState(authorizationState);
+  const navigate = useNavigate();
+
   const [message, setMessage] = useState<string>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>();
-  const handleSubmitForm: SubmitHandler<LoginForm> = useCallback(async (data) => {
-    const response = await axios.axiosInstance
-      .post('/api/user/login', data)
-      .then((res) => res.data)
-      .catch((err) => {
-        if (err instanceof AxiosError) {
-          setMessage(`로그인에 실패했습니다. (${err.response?.data?.message})`);
-        }
-      });
-    console.log(response);
-  }, []);
+  const handleSubmitForm: SubmitHandler<LoginForm> = useCallback(
+    async (data) => {
+      const response = await axios.axiosInstance
+        .post<LoginResponse>('/api/user/login', data)
+        .then((res) => res.data)
+        .catch((err) => {
+          if (err instanceof AxiosError) {
+            setMessage(err.response?.data?.message || '로그인에 실패했습니다.');
+          }
+        });
+
+      if (response) {
+        const { token } = response;
+        setMessage(undefined);
+        setAuthorization({ token });
+        navigate('/');
+      }
+    },
+    [navigate, setAuthorization],
+  );
 
   return (
     <DefaultLayout css={[tw`flex flex-col justify-center items-center`]}>
@@ -66,7 +82,21 @@ const Login: React.FC = () => {
         <Button type="submit" css={[tw`w-full mt-8`]}>
           로그인
         </Button>
-        {message && <span>{message}</span>}
+        <div
+          css={[
+            tw`text-sm text-zinc-600 hover:text-zinc-500 font-bold`,
+            tw`cursor-pointer transition-colors`,
+          ]}
+          onClick={() => navigate('/register')}
+        >
+          계정이 없으신가요?
+        </div>
+        {message && (
+          <div>
+            <div>로그인에 실패했습니다.</div>
+            <div>{message}</div>
+          </div>
+        )}
       </form>
     </DefaultLayout>
   );

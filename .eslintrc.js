@@ -61,6 +61,7 @@ module.exports = {
         'jsx-a11y/control-has-associated-label': 'off',
         "react/prop-types": "off",
         'jsx-a11y/label-has-associated-control': 'off',
-        'react/button-has-type': 'off'
+        'react/button-has-type': 'off',
+        "@typescript-eslint/naming-convention": 'warn'
     },
 };
