@@ -1,25 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { useRecoilValue } from 'recoil';
+import { Roles } from 'types/API';
 
+import userState from '@recoil/atoms/user';
 import userSelector from '@recoil/selectors/user';
 
 interface PrivateRouterProps {
   children: React.ReactElement;
-  role?: any; // TODO: 권한 추가
+  roles?: Roles[];
 }
 
-const PrivateRouter: React.FC<PrivateRouterProps> = ({ children, role }) => {
+const PrivateRouter: React.FC<PrivateRouterProps> = ({ children, roles }) => {
   const user = useRecoilValue(userSelector);
-  //   const navigator = useNavigate();
 
-  // FIXME: 작동 안됨, 오류도 안남
-  // if (user === null) {
-  //   redirect('/login');
-  // }
+  useEffect(() => {
+    console.log('privaterouter', user?.twoFactorAuthenticated);
+  }, [user]);
 
-  if (user === null) return <Navigate to="/login" />;
+  if (user === null || !user.twoFactorAuthenticated) return <Navigate to="/login" />;
+
+  const userHasRoles = roles?.every((requireRole) => user.roleGroup.roles.includes(requireRole));
+  if (roles && userHasRoles === false) return <Navigate to="/" />;
+
   return children;
 };
 

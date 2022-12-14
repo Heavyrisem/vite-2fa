@@ -1,8 +1,10 @@
 import { AtomEffect } from 'recoil';
 
+import { BaseAtom } from './atom.interface';
+
 // eslint-disable-next-line import/prefer-default-export
 export const localStorageEffect =
-  <T>(key: string): AtomEffect<T> =>
+  <T extends BaseAtom>(key: string): AtomEffect<T> =>
   ({ setSelf, onSet }) => {
     const savedValue = localStorage.getItem(key);
     if (savedValue != null) {
@@ -10,6 +12,9 @@ export const localStorageEffect =
     }
 
     onSet((newValue, _, isReset) => {
+      const { saveStorage } = newValue;
+      // if (!saveStorage) return;
+
       if (isReset) {
         localStorage.removeItem(key);
       } else {

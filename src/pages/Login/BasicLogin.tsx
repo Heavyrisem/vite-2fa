@@ -10,44 +10,37 @@ import { LoginResponse } from 'types/API';
 import Button from '@components/Button';
 import Input from '@components/Input';
 import DefaultLayout from '@components/Layouts/DefaultLayout';
+import useAxiosInstance from '@hooks/useAxiosInstance';
+import useUser, { BasicLoginForm } from '@hooks/useUser';
 import authorizationState from '@recoil/atoms/authorization';
-import { axios } from '@utils/axios';
 
-interface LoginForm {
-  email: string;
-  password: string;
-  twoFactorCode: string;
+interface BasicLoginProps {
+  onLoginSuccess?: () => void;
 }
 
-const Login: React.FC = () => {
-  const setAuthorization = useSetRecoilState(authorizationState);
+const BasicLogin: React.FC<BasicLoginProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const [message, setMessage] = useState<string>();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>();
-  const handleSubmitForm: SubmitHandler<LoginForm> = useCallback(
-    async (data) => {
-      const response = await axios.axiosInstance
-        .post<LoginResponse>('/api/user/login', data)
-        .then((res) => res.data)
+  } = useForm<BasicLoginForm>();
+  const handleSubmitForm: SubmitHandler<BasicLoginForm> = useCallback(
+    (data) =>
+      login(data)
+        .then(() => {
+          setMessage(undefined);
+          onLoginSuccess?.();
+        })
         .catch((err) => {
           if (err instanceof AxiosError) {
             setMessage(err.response?.data?.message || '로그인에 실패했습니다.');
           }
-        });
-
-      if (response) {
-        const { token } = response;
-        setMessage(undefined);
-        setAuthorization({ token });
-        navigate('/');
-      }
-    },
-    [navigate, setAuthorization],
+        }),
+    [login, onLoginSuccess],
   );
 
   return (
@@ -70,13 +63,6 @@ const Login: React.FC = () => {
           css={[tw`w-full`]}
           invalid={errors.password && (errors.password.message || '잘못된 입력값입니다.')}
           {...register('password', { required: true })}
-        />
-        <Input
-          type="number"
-          label="2FA Code"
-          css={[tw`w-full`]}
-          invalid={errors.twoFactorCode && (errors.twoFactorCode.message || '잘못된 입력값입니다.')}
-          {...register('twoFactorCode', { required: true, minLength: 6, maxLength: 6 })}
         />
 
         <Button type="submit" css={[tw`w-full mt-8`]}>
@@ -102,4 +88,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default BasicLogin;

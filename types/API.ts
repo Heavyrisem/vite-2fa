@@ -1,14 +1,26 @@
+import { User } from '@recoil/atoms/user';
+
 export interface ErrorResponse {
   message: string | string[];
 }
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;
 }
 
 export interface RegisterResponse {
-  result: {
-    twoFactorKey: string;
-    twoFactorUrl: string;
-  };
+  accessToken: string;
+}
+
+export interface ReIssueResponse {
+  accessToken: string;
+}
+
+export interface UserMeResponse {
+  result: User;
+}
+
+export enum Roles {
+  TEST_ROLE = 'TestRole',
+  MANAGE_USER = 'ManageUser',
 }
