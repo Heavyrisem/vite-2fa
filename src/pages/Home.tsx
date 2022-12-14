@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AxiosError } from 'axios';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import tw from 'twin.macro';
 
 import Button from '@components/Button';
@@ -9,13 +9,13 @@ import DefaultLayout from '@components/Layouts/DefaultLayout';
 import useAxiosInstance from '@hooks/useAxiosInstance';
 import useUser from '@hooks/useUser';
 import authorizationState from '@recoil/atoms/authorization';
+import userState from '@recoil/atoms/user';
 import jwtSelector from '@recoil/selectors/jwt';
-import userSelector from '@recoil/selectors/user';
 
 const Home: React.FC = () => {
   const axiosInstance = useAxiosInstance();
-  const [authorization, setAuthorization] = useRecoilState(authorizationState);
-  const user = useRecoilValue(userSelector);
+  const authorization = useRecoilValue(authorizationState);
+  const user = useRecoilValue(userState);
   const jwt = useRecoilValue(jwtSelector);
   const { logout } = useUser();
 

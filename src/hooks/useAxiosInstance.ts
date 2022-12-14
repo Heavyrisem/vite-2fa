@@ -1,8 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios from 'axios';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { ReIssueResponse } from 'types/API';
 
 import authorizationState from '@recoil/atoms/authorization';
 import userState from '@recoil/atoms/user';
@@ -49,7 +48,6 @@ function useAxiosInstance() {
         // }
 
         if (status === 403) {
-          // TODO: refresh /user/me
           const { result: user } = await getLoggedInUser(axiosInstance);
           console.log('ReFetch LoggedInUser', user);
           setUser(user);

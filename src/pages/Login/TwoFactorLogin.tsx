@@ -2,16 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { AxiosError } from 'axios';
-import { useSetRecoilState } from 'recoil';
 import tw, { css } from 'twin.macro';
-import { LoginResponse } from 'types/API';
 
 import Button from '@components/Button';
 import Input from '@components/Input';
 import DefaultLayout from '@components/Layouts/DefaultLayout';
-import useAxiosInstance from '@hooks/useAxiosInstance';
 import useUser, { TwoFactorLoginForm } from '@hooks/useUser';
-import authorizationState from '@recoil/atoms/authorization';
 
 interface TwoFactorLoginProps {
   onLoginSuccess?: () => void;

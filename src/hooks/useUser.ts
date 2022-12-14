@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { LoginResponse, RegisterResponse } from 'types/API';
 
 import authorizationState from '@recoil/atoms/authorization';

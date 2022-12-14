@@ -13,7 +13,7 @@ export const localStorageEffect =
 
     onSet((newValue, _, isReset) => {
       const { saveStorage } = newValue;
-      // if (!saveStorage) return;
+      // if (!saveStorage) return; // TODO: login 저장 여부
 
       if (isReset) {
         localStorage.removeItem(key);

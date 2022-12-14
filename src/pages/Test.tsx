@@ -8,12 +8,12 @@ import Button from '@components/Button';
 import DefaultLayout from '@components/Layouts/DefaultLayout';
 import useAxiosInstance from '@hooks/useAxiosInstance';
 import authorizationState from '@recoil/atoms/authorization';
-import userSelector from '@recoil/selectors/user';
+import userState from '@recoil/atoms/user';
 
 const Test: React.FC = () => {
   const axiosInstance = useAxiosInstance();
   const [authorization, setAuthorization] = useRecoilState(authorizationState);
-  const user = useRecoilValue(userSelector);
+  const user = useRecoilValue(userState);
 
   const [message, setMessage] = useState<string>();
 

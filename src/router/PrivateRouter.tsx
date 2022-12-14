@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { Roles } from 'types/API';
 
 import userState from '@recoil/atoms/user';
-import userSelector from '@recoil/selectors/user';
 
 interface PrivateRouterProps {
   children: React.ReactElement;
@@ -13,11 +12,7 @@ interface PrivateRouterProps {
 }
 
 const PrivateRouter: React.FC<PrivateRouterProps> = ({ children, roles }) => {
-  const user = useRecoilValue(userSelector);
-
-  useEffect(() => {
-    console.log('privaterouter', user?.twoFactorAuthenticated);
-  }, [user]);
+  const user = useRecoilValue(userState);
 
   if (user === null || !user.twoFactorAuthenticated) return <Navigate to="/login" />;
 
