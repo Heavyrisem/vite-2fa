@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import axios from 'axios';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import authorizationState from '@recoil/atoms/authorization';
 import userState from '@recoil/atoms/user';
@@ -11,6 +11,7 @@ import { getLoggedInUser } from '@utils/api/user';
 
 function useAxiosInstance() {
   const [authorization, setAuthorization] = useRecoilState(authorizationState);
+  const resetAuthorization = useResetRecoilState(authorizationState);
   const setUser = useSetRecoilState(userState);
   const axiosInstance = axios.create({
     withCredentials: true,
@@ -23,16 +24,6 @@ function useAxiosInstance() {
   }, [authorization.token, axiosInstance.defaults.headers]);
 
   useEffect(() => {
-    // axiosInstance.interceptors.request.use((config) => {
-    //   const newConfig = config;
-    //   console.log('INTERCEPTOR FOR', newConfig.url, authorization);
-    //   if (newConfig.headers && authorization.token) {
-    //     newConfig.headers.authorization = `Bearer ${authorization.token}`;
-    //   }
-
-    //   return newConfig;
-    // });
-
     axiosInstance.interceptors.response.use(
       (res) => res,
       async (err) => {
@@ -40,12 +31,6 @@ function useAxiosInstance() {
           config,
           response: { status, data },
         } = err;
-        // if (config.url === REFRESH_URL && status === 401) {
-        //   alert('로그인 정보가 만료되었습니다.');
-        //   console.log('TokenExpired');
-        //   setAuthorization({ token: null });
-        //   return Promise.resolve(err);
-        // }
 
         if (status === 403) {
           const { result: user } = await getLoggedInUser(axiosInstance);
@@ -62,7 +47,7 @@ function useAxiosInstance() {
           const { accessToken } = await reIssueToken(axiosInstance).catch((error) => {
             alert('로그인 정보가 만료되었습니다.');
             console.log('TokenExpired');
-            setAuthorization({ token: null });
+            resetAuthorization();
             setUser(null);
             return Promise.resolve(error);
           });
@@ -89,6 +74,7 @@ function useAxiosInstance() {
     authorization.token,
     axiosInstance,
     axiosInstance.interceptors.response,
+    resetAuthorization,
     setAuthorization,
     setUser,
   ]);

@@ -31,6 +31,7 @@ const useUser = () => {
 
   const fetchUser = useCallback(
     async (token?: string) => {
+      // FIXME: token update 직후에 user 업데이트를 하는 경우, authorization 값이 비어있어서 401 반환
       const headers = token
         ? {
             authorization: `Bearer ${token}`,
