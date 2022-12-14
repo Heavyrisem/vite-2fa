@@ -18,6 +18,7 @@ const BasicLogin: React.FC<BasicLoginProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const { login } = useUser();
 
+  const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState<string>();
   const {
     register,
@@ -26,7 +27,7 @@ const BasicLogin: React.FC<BasicLoginProps> = ({ onLoginSuccess }) => {
   } = useForm<BasicLoginForm>();
   const handleSubmitForm: SubmitHandler<BasicLoginForm> = useCallback(
     (data) =>
-      login(data)
+      login({ ...data, saveStorage: rememberMe })
         .then(() => {
           setMessage(undefined);
           onLoginSuccess?.();
@@ -36,7 +37,7 @@ const BasicLogin: React.FC<BasicLoginProps> = ({ onLoginSuccess }) => {
             setMessage(err.response?.data?.message || '로그인에 실패했습니다.');
           }
         }),
-    [login, onLoginSuccess],
+    [login, onLoginSuccess, rememberMe],
   );
 
   return (
@@ -64,8 +65,19 @@ const BasicLogin: React.FC<BasicLoginProps> = ({ onLoginSuccess }) => {
         <Button type="submit" css={[tw`w-full mt-8`]}>
           로그인
         </Button>
+        <label
+          css={[
+            tw`flex gap-2`,
+            tw`text-sm text-zinc-600 font-bold`,
+            tw`cursor-pointer transition-colors`,
+          ]}
+        >
+          <input type="checkbox" onChange={(e) => setRememberMe(e.target.checked)} />
+          로그인 저장
+        </label>
         <div
           css={[
+            tw`mt-4`,
             tw`text-sm text-zinc-600 hover:text-zinc-500 font-bold`,
             tw`cursor-pointer transition-colors`,
           ]}

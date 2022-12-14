@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import { Roles } from 'types/API';
+import { Roles } from 'types/role';
 
 import Home from '@pages/Home';
 import Login from '@pages/Login/index';

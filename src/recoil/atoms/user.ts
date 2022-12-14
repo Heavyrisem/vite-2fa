@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { Roles } from 'types/API';
+import { Role } from 'types/role';
 
 export interface User {
   id: number;
@@ -8,7 +8,7 @@ export interface User {
   roleGroup: {
     name: string;
     description: string;
-    roles: Roles[];
+    roles: Role[];
   };
   twoFactorAuthenticated: boolean;
 }

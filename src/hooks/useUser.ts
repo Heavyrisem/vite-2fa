@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { LoginResponse, RegisterResponse } from 'types/API';
 
+import { BaseAtom } from '@recoil/atom.interface';
 import authorizationState from '@recoil/atoms/authorization';
 import userState from '@recoil/atoms/user';
 import { getLoggedInUser } from '@utils/api/user';
@@ -25,6 +26,7 @@ export interface TwoFactorLoginForm {
 const useUser = () => {
   const axiosInstance = useAxiosInstance();
   const setAuthorization = useSetRecoilState(authorizationState);
+  const resetAuthorization = useResetRecoilState(authorizationState);
   const setUser = useSetRecoilState(userState);
 
   const fetchUser = useCallback(
@@ -37,21 +39,20 @@ const useUser = () => {
       const { result: user } = await getLoggedInUser(axiosInstance, { headers }).catch(() => ({
         result: null,
       }));
-      console.log('request fetch user', user);
       setUser(user);
     },
     [axiosInstance, setUser],
   );
 
   const login = useCallback(
-    async (data: BasicLoginForm) => {
+    async ({ saveStorage, ...data }: BasicLoginForm & BaseAtom) => {
       const response = await axiosInstance
         .post<LoginResponse>('/api/auth/login', data)
         .then((res) => res.data);
 
       if (response) {
         const { accessToken: token } = response;
-        setAuthorization({ token });
+        setAuthorization({ token, saveStorage });
         fetchUser(token);
       }
     },
@@ -59,9 +60,9 @@ const useUser = () => {
   );
 
   const logout = useCallback(() => {
-    setAuthorization({ token: null });
+    resetAuthorization();
     setUser(null);
-  }, [setAuthorization, setUser]);
+  }, [resetAuthorization, setUser]);
 
   const twoFactorLogin = useCallback(
     async (data: TwoFactorLoginForm) => {

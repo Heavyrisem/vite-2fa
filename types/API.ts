@@ -19,8 +19,3 @@ export interface ReIssueResponse {
 export interface UserMeResponse {
   result: User;
 }
-
-export enum Roles {
-  TEST_ROLE = 'TestRole',
-  MANAGE_USER = 'ManageUser',
-}
