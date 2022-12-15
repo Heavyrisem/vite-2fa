@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import axios from 'axios';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -33,9 +34,11 @@ function useAxiosInstance() {
         } = err;
 
         if (status === 403) {
+          toast.error('권한이 없습니다.');
           const { result: user } = await getLoggedInUser(axiosInstance);
           console.log('ReFetch LoggedInUser', user);
           setUser(user);
+          return Promise.reject(err);
         }
 
         if (
@@ -44,24 +47,25 @@ function useAxiosInstance() {
           config.url !== REFRESH_URL &&
           status === 401
         ) {
-          const { accessToken } = await reIssueToken(axiosInstance).catch((error) => {
-            alert('로그인 정보가 만료되었습니다.');
-            console.log('TokenExpired');
-            resetAuthorization();
-            setUser(null);
-            return Promise.resolve(error);
-          });
-          console.log('RE-ISSUE JWT Token');
-
-          if (accessToken) {
-            setAuthorization({ token: accessToken });
-            return axiosInstance.request({
-              ...config,
-              headers: { authorization: `Bearer ${accessToken}` },
+          return reIssueToken(axiosInstance)
+            .then(({ accessToken }) => {
+              console.log('RE-ISSUE JWT Token');
+              setAuthorization({ token: accessToken });
+              return axiosInstance.request({
+                ...config,
+                headers: { authorization: `Bearer ${accessToken}` },
+              });
+            })
+            .catch((error) => {
+              toast.error('로그인 정보가 만료되었습니다.');
+              console.log('TokenExpired');
+              resetAuthorization();
+              setUser(null);
+              return Promise.resolve(error);
             });
-          }
         }
 
+        toast.error(`오류가 발생했습니다 (${data?.message})`);
         return Promise.reject(err);
       },
     );

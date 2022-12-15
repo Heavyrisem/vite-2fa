@@ -2,6 +2,9 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@assets/*": [
+                "src/assets/*"
+            ],
             "@router/*": [
                 "src/router/*"
             ],

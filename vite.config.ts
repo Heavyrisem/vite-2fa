@@ -37,6 +37,7 @@ export default defineConfig({
       { find: '@utils', replacement: 'src/utils' },
       { find: '@recoil', replacement: 'src/recoil' },
       { find: '@router', replacement: 'src/router' },
+      { find: '@assets', replacement: 'src/assets' },
     ],
   },
   esbuild: {

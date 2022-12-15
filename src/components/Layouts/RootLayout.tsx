@@ -6,7 +6,15 @@ interface RootLayoutProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children, ...props }) => {
   return (
-    <div css={[tw`flex-1`, tw`bg-zinc-900`, tw`text-white`]} {...props}>
+    <div
+      css={[
+        tw`flex flex-1 items-center justify-center`,
+        tw`h-full`,
+        tw`bg-zinc-900`,
+        tw`text-white`,
+      ]}
+      {...props}
+    >
       {children}
     </div>
   );

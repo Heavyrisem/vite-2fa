@@ -20,4 +20,7 @@ declare module 'react' {
     css?: CSSInterpolation;
     tw?: string;
   }
+  interface CSSProperties {
+    [key: `--${string}`]: string | number;
+  }
 }

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 import { useRecoilValue } from 'recoil';
 
 import RootLayout from '@components/Layouts/RootLayout';
+import Loading from '@components/Loading';
 import useEffectOnce from '@hooks/useEffectOnce';
 import useUser from '@hooks/useUser';
 import jwtSelector from '@recoil/selectors/jwt';
 
 import Router from './router';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,14 +21,22 @@ const App: React.FC = () => {
 
   useEffectOnce(() => {
     if (jwt) {
-      fetchUser().then(() => setIsLoading(false));
+      fetchUser().then(() =>
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000),
+      );
     } else {
       setIsLoading(false);
     }
   });
 
-  // TODO: loading animation
-  return <RootLayout>{isLoading ? <span>loading</span> : <Router />}</RootLayout>;
+  return (
+    <RootLayout>
+      {isLoading ? <Loading /> : <Router />}
+      <ToastContainer theme="dark" position="bottom-right" />
+    </RootLayout>
+  );
 };
 
 export default App;
